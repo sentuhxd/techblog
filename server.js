@@ -20,7 +20,7 @@ const hbs = exphbs.create({ helpers });
 // this allows you to be able to create a session middleware with the given options below
 const sess = {
   secret: 'Super secret secret',
-  cookie: {},
+  cookie: { maxAge: 35000},
   resave: false,
   saveUninitialized: true,
   store: new SequelizeStore({
