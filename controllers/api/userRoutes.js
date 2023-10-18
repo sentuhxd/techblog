@@ -1,54 +1,56 @@
 const router = require('express').Router();
 const { User } = require('../../models');
 
+router.post('/', async (req, res) => {
+  try {
+    const userInfo = await User.create(req.body)
+
+    req.session.save(() => {
+      req.session.user_id = userInfo.id
+      req.session.loggedIn = true
+
+      res.status(200).json(userInfo)
+    })
+  } catch (err) {
+    res.status(400).json(err)
+  }
+})
+
 router.post('/login', async (req, res) => {
   try {
-    // TODO: Add a comment describing the functionality of this expression
-    // seeing if the email being typed matches the one already in the database
-    const userData = await User.findOne({ where: { email: req.body.email } });
+    const userInfo = await User.findOne({ where: { email: req.body.email } })
 
-    if (!userData) {
-      res
-        .status(400)
-        .json({ message: 'Incorrect email or password, please try again' });
-      return;
+    if (!userInfo) {
+      res.status(400).json({ message: 'Incorrect email or password, please try again' })
+      return
     }
 
-    // TODO: Add a comment describing the functionality of this expression
-    // checking if the password matches the hashed password on file 
-    const validPassword = await userData.checkPassword(req.body.password);
+    const validPassword = await userInfo.checkPassword(req.body.password)
 
     if (!validPassword) {
-      res
-        .status(400)
-        .json({ message: 'Incorrect email or password, please try again' });
-      return;
+      res.status(400).json({ message: 'Incorrect email or password, please try again' })
+      return
     }
 
-    // TODO: Add a comment describing the functionality of this method
-    // session saved back to the store replacing contents on store witht he one in memory
     req.session.save(() => {
-      req.session.user_id = userData.id;
-      req.session.logged_in = true;
-      
-      res.json({ user: userData, message: 'You are now logged in!' });
-    });
+      req.session.user_id = userInfo.id
+      req.session.loggedIn = true
 
+      res.json({ user: userInfo, message: 'You are now logged in!' })
+    })
   } catch (err) {
-    res.status(400).json(err);
+    res.status(400).json(err)
   }
-});
+})
 
 router.post('/logout', (req, res) => {
-  if (req.session.logged_in) {
-    // TODO: Add a comment describing the functionality of this method
-    // will get rid of the session once someone decides to logout
+  if (req.session.loggedIn) {
     req.session.destroy(() => {
-      res.status(204).end();
-    });
+      res.status(204).end()
+    })
   } else {
-    res.status(404).end();
+    res.status(404).end()
   }
-});
+})
 
-module.exports = router;
+module.exports = router
