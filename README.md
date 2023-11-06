@@ -17,7 +17,7 @@ Clone the repo down and install any dependencies needed
 
 ## Usage
 
-Start the program with  ` npm run dev ` in the command line. Link to deployed site [here]()
+Start the program with  ` npm run dev ` in the command line. Link to deployed site [here](https://secure-falls-21009-607908ad0507.herokuapp.com/)
 
 
 ## Contributing
